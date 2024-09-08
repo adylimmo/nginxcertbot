@@ -1,0 +1,29 @@
+services:
+    helloworld:
+        container_name: helloworld
+        image: crccheck/hello-world
+        expose:
+            - 8000:80
+
+    nginx:
+        container_name: nginx
+        restart: unless-stopped
+        image: nginx
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./nginx/aplikasi.ecademy.id.conf:/etc/nginx/conf.d/aplikasi.ecademy.id.conf
+            - ./certbot/conf:/etc/letsencrypt
+            - ./certbot/www:/var/www/certbot
+
+
+    certbot:
+      image: certbot/certbot
+      container_name: certbot
+      volumes:
+        - ./certbot/conf:/etc/letsencrypt
+        - ./certbot/www:/var/www/certbot
+      # command: certonly --webroot -w /var/www/certbot --force-renewal --email info@ecademy.id -d aplikasi.ecademy.id --agree-tos
+      command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email info@ecademy.id -d aplikasi.ecademy.id --agree-tos
+
